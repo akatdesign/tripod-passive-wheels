@@ -53,34 +53,27 @@ void setup() {
 void loop() {
   // Usb.Task();//used for usb host shield
   if (PS4.isConnected()) {
-      if (PS4.Triangle()) {
-        Serial.print(F("\r\nTriangle"));
-        //PS4.setRumbleOn(RumbleLow);//振動　used for usb host shield
-        if (PS4.Up()) {
+      if (PS4.Up()) {
           Serial.print(F("\r\nUp"));
-          //PS4.setLed(Red);
           krs.setPos(0, 7500 + 1000);
           krs.setPos(10, 7500 - 1000);
           delay(500);
           krs.setPos(0, 7500 - 1500);
           krs.setPos(10, 7500 + 1500);
           delay(500);
-        } if (PS4.Right()) {
+      } if (PS4.Right()) {
           Serial.print(F("\r\nRight"));
           //PS4.setLed(Blue);
           krs.setPos(24, 7500 + 250 -500);
-        } if (PS4.Down()) {
+      } if (PS4.Down()) {
           Serial.print(F("\r\nDown"));
           //PS4.setLed(Yellow);
           krs.setPos(24, 7500 + 250);
-        } if (PS4.Left()) {
+      } if (PS4.Left()) {
           Serial.print(F("\r\nLeft"));
           //PS4.setLed(Green);
           krs.setPos(24, 7500 + 250 + 500);
-
-        }
-      }
-      if (PS4.Circle()) {
+      } if (PS4.Circle()) {
         Serial.print(F("\r\nCircle"));
         //PS4.setRumbleOn(RumbleHigh);
         if (PS4.Up()) {
@@ -236,7 +229,7 @@ void loop() {
         printTouch = !printTouch;
       }
 
-         if (PS4.L2()) {
+    if (PS4.L2()) {
       Serial.printf("L2 button at %d\n", PS4.L2Value());
     }
     if (PS4.R2()) {
