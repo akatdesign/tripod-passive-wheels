@@ -7,9 +7,6 @@ const int TIMEOUT = 10;    //通信できてないか確認用にわざと遅め
 
 IcsHardSerialClass krs(&Serial, EN_PIN, BAUDRATE, TIMEOUT); //インスタンス＋ENピン(2番ピン)およびUARTの指定
 
-bool printAngle, printTouch;
-uint8_t oldL2Value, oldR2Value;
-
 void setup() {
   Serial.begin(115200);
   PS4.begin("08:B6:1F:ED:4B:E2");
