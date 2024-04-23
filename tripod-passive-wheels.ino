@@ -15,21 +15,15 @@ void setup() {
   PS4.begin("08:B6:1F:ED:4B:E2");
 
   krs.begin();  //サーボモータの通信初期設定
-  krs.setPos(0, 7500);     //位置指令　ID:0サーボを7500へ 中央
-  krs.setPos(1, 7500 - 1500);   //位置指令　ID:1サーボを7500へ 中央
-  krs.setPos(2, 7500);     //位置指令　ID:2サーボを7500へ 中央
-  krs.setPos(3, 7500 - 1000);   //位置指令　ID:3サーボを7500へ 中央
-  krs.setPos(4, 7500 + 250); //位置指令　ID:4サーボを7500へ 中央
-  krs.setPos(10, 7500);     //位置指令　ID:0サーボを7500へ 中央
-  krs.setPos(11, 7500 - 1500);   //位置指令　ID:1サーボを7500へ 中央
-  krs.setPos(12, 7500);     //位置指令　ID:2サーボを7500へ 中央
-  krs.setPos(13, 7500 - 1000);   //位置指令　ID:3サーボを7500へ 中央
-  krs.setPos(14, 7500 + 250);   //位置指令　ID:4サーボを7500へ 中央
-  krs.setPos(20, 7500);     //位置指令　ID:0サーボを7500へ 中央
-  krs.setPos(21, 7500 - 1500);   //位置指令　ID:1サーボを7500へ 中央
-  krs.setPos(22, 7500);     //位置指令　ID:2サーボを7500へ 中央
-  krs.setPos(23, 7500 + 1000);   //位置指令　ID:3サーボを7500へ 中央
-  krs.setPos(24, 7500 + 250);   //位置指令　ID:4サーボを7500へ 中央
+
+  // サーボの初期位置設定
+  for (int id = 0; id <= 24; id += 10) {
+    krs.setPos(id, 7500);
+    krs.setPos(id + 1, 7500 - 1500);
+    krs.setPos(id + 2, 7500);
+    krs.setPos(id + 3, 7500 - 1000);
+    krs.setPos(id + 4, 7500 + 250);
+  }
 }
 
 void loop() {
@@ -46,15 +40,15 @@ void loop() {
       if (PS4.Right()) {
           Serial.print(F("\r\nRight"));
           krs.setPos(24, 7500 + 250 -500);
-      } 
+      }
       if (PS4.Down()) {
           Serial.print(F("\r\nDown"));
           krs.setPos(24, 7500 + 250);
-      } 
+      }
       if (PS4.Left()) {
           Serial.print(F("\r\nLeft"));
           krs.setPos(24, 7500 + 250 + 500);
-      } 
+      }
       if (PS4.Circle()) {
         Serial.print(F("\r\nCircle"));
         if (PS4.Up()) {
