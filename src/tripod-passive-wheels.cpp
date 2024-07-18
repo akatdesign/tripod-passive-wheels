@@ -8,72 +8,23 @@ const int TIMEOUT = 10;    //通信できてないか確認用にわざと遅め
 
 IcsHardSerialClass krs(&Serial, EN_PIN, BAUDRATE, TIMEOUT); //インスタンス＋ENピン(2番ピン)およびUARTの指定
 
-void reset_position();
-void forward(int right_leg_id, int left_leg_id);
-void right_rotation();
-void left_rotation();
+enum Mode {
+  front_leg,
+  right_leg,
+  left_leg
+};
 
-void setup() {
-  Serial.begin(115200);
-  PS4.begin("08:B6:1F:ED:4B:E2");
-  krs.begin();  //サーボモータの通信初期設定
-  reset_position(); // サーボの初期位置設定
-}
-
-void loop() {
-  if (PS4.isConnected()) {
-      if (PS4.Up()) {
-        forward(0, 10);
-      }
-      if (PS4.Right()) {
-          krs.setPos(24, 7500 + 250 -500);
-      }
-      if (PS4.Down()) {
-          krs.setPos(24, 7500 + 250);
-      }
-      if (PS4.Left()) {
-          krs.setPos(24, 7500 + 250 + 500);
-      }
-      if (PS4.Cross()) {
-        reset_position();
-      }
-      if (PS4.L1()) {
-        left_rotation();
-      }
-      if (PS4.R1()) {
-        right_rotation();
-      }
-      if (PS4.Circle()) {
-        if (PS4.Up()) {
-          forward(20, 0);
-        }
-        if (PS4.Right()) {
-          krs.setPos(14, 7500 + 250 - 500);
-        }
-        if (PS4.Down()) {
-          krs.setPos(14, 7500 + 250);
-        }
-        if (PS4.Left()) {
-          krs.setPos(14, 7500 + 250 + 500);
-        }
-      }
-      if (PS4.Square()) {
-        if (PS4.Up()) {
-          forward(10, 20);
-        }
-        if (PS4.Right()) {
-          krs.setPos(4, 7500 + 250 - 500);
-        }
-        if (PS4.Down()) {
-          krs.setPos(4, 7500 + 250);
-        }
-        if (PS4.Left()) {
-          krs.setPos(4, 7500 + 250 + 500);
-        }
-      }
+Mode ChangeMode(Mode current) {
+  if (current == front_leg) {
+    return right_leg;
+  } else if (current == right_leg) {
+    return left_leg;
+  } else if (current == left_leg) {
+    return front_leg;
+  } else {
+    return front_leg; // デフォルトの戻り値
   }
 }
-
 
 void reset_position() {
   for (int id = 0; id <= 24; id += 10) {
@@ -142,6 +93,76 @@ void left_rotation() {
   krs.setPos(13, 7500 - 2500 );
   krs.setPos(23, 7500 - 2500);
   delay(500);
+}
+
+void setup() {
+  Serial.begin(115200);
+  PS4.begin("08:B6:1F:ED:4B:E2");
+  krs.begin();  //サーボモータの通信初期設定
+  reset_position(); // サーボの初期位置設定
+}
+
+void loop() {
+  Mode mode = front_leg;
+
+  if (PS4.isConnected()) {
+    if (PS4.Share()) {
+      mode = ChangeMode(mode);
+      Serial.print(F("\r\noptions"));
+    }
+    if (mode == front_leg) {
+      if (PS4.Up()) {
+        Serial.print(("\r\nup"));
+        forward(0, 10);
+      }
+      if (PS4.Right()) {
+        krs.setPos(24, 7500 + 250 -500);
+      }
+      if (PS4.Down()) {
+        krs.setPos(24, 7500 + 250);
+      }
+      if (PS4.Left()) {
+        krs.setPos(24, 7500 + 250 + 500);
+      }
+    } else if (mode == right_leg) {
+      if (PS4.Up()) {
+        forward(20, 0);
+        Serial.print(("\r\nright_up"));
+      }
+      if (PS4.Right()) {
+        krs.setPos(14, 7500 + 250 - 500);
+      }
+      if (PS4.Down()) {
+        krs.setPos(14, 7500 + 250);
+      }
+      if (PS4.Left()) {
+        krs.setPos(14, 7500 + 250 + 500);
+      }
+    } else if (mode == left_leg) {
+      if (PS4.Up()) {
+        forward(10, 20);
+      }
+      if (PS4.Right()) {
+        krs.setPos(4, 7500 + 250 - 500);
+      }
+      if (PS4.Down()) {
+        krs.setPos(4, 7500 + 250);
+      }
+      if (PS4.Left()) {
+        krs.setPos(4, 7500 + 250 + 500);
+      }
+    }
+    if (PS4.Cross()) {
+      reset_position();
+    }
+    if (PS4.L1()) {
+      left_rotation();
+    }
+    if (PS4.R1()) {
+      right_rotation();
+    }
+
+  }
 }
 
 // Serial.print(F("\r\nLeft"));
