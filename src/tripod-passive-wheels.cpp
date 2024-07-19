@@ -157,11 +157,9 @@ void loop() {
       }
       if (PS4.L1()) {
         leftRotation();
-        resetPosition();
       }
       if (PS4.R1()) {
         rightRotation();
-        resetPosition();
       }
       PS4.sendToController();
     }
