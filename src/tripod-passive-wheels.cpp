@@ -43,6 +43,19 @@ void forward(int right_leg_id, int left_leg_id) {
   delay(500);
 }
 
+void forwardImp(int right_leg_id, int left_leg_id, int right_tip_leg_id, int left_tip_leg_id) {
+  krs.setPos(right_leg_id, 7500 + 1000);
+  krs.setPos(left_leg_id, 7500 - 1000);
+  krs.setPos(right_tip_leg_id, 7500 + 1000);
+  krs.setPos(left_tip_leg_id, 7500 - 1000);
+  delay(500);
+  krs.setPos(right_leg_id, 7500 - 1500);
+  krs.setPos(left_leg_id, 7500 + 1500);
+  krs.setPos(right_tip_leg_id, 7500 - 100);
+  krs.setPos(left_tip_leg_id, 7500 + 100);
+  delay(500);
+}
+
 void rightRotation() {
   krs.setPos(4, 7500 - 1250);
   krs.setPos(14, 7500 - 1250);
@@ -112,7 +125,7 @@ void loop() {
       if (mode == front_leg) {
         PS4.setLed(255, 0, 0);
         if (PS4.Up()) {
-          forward(0, 10);
+          forwardImp(0, 10, 4, 14);
         }
         if (PS4.Right()) {
           krs.setPos(24, 7500 + 250 - 500);
