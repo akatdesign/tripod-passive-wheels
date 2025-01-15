@@ -34,6 +34,83 @@ void resetPosition() {
   }
 }
 
+void controlPos(
+  int designatedPos0,
+  int designatedPos1,
+  int designatedPos2,
+  int designatedPos3,
+  int designatedPos4,
+  int designatedPos10,
+  int designatedPos11,
+  int designatedPos12,
+  int designatedPos13,
+  int designatedPos14,
+  int designatedPos20,
+  int designatedPos21,
+  int designatedPos22,
+  int designatedPos23,
+  int designatedPos24,
+  int dtime,
+  int interpolation
+){
+  int i = 0;
+  int c = 0;
+
+  int pos[15];
+  int targetPos[15];
+  int homePos[15];
+  int designatedPos[15];
+
+  homePos[0] = 0;
+  homePos[1] = 0;
+  homePos[2] = 0;
+  homePos[3] = 0;
+  homePos[4] = 0;
+  homePos[5] = 0;
+  homePos[6] = 0;
+  homePos[7] = 0;
+  homePos[8] = 0;
+  homePos[9] = 0;
+  homePos[10] = 0;
+  homePos[11] = 0;
+  homePos[12] = 0;
+  homePos[13] = 0;
+  homePos[14] = 0;
+
+    // 指定値を配列に代入
+  designatedPos[0] = designatedPos0;
+  designatedPos[1] = designatedPos1;
+  designatedPos[2] = designatedPos2;
+  designatedPos[3] = designatedPos3;
+  designatedPos[4] = designatedPos4;
+  designatedPos[5] = designatedPos10;
+  designatedPos[6] = designatedPos11;
+  designatedPos[7] = designatedPos12;
+  designatedPos[8] = designatedPos13;
+  designatedPos[9] = designatedPos14;
+  designatedPos[10] = designatedPos20;
+  designatedPos[11] = designatedPos21;
+  designatedPos[12] = designatedPos22;
+  designatedPos[13] = designatedPos23;
+  designatedPos[14] = designatedPos24;
+
+  for (int i = 0; i < 15; i++) {
+    targetPos[i] = 7500 + homePos[i] + designatedPos[i];
+    pos[i] = krs.getPos(i + 1); // 現在値を取得
+    targetPos[i] -= pos[i];     // 現在値から目標値への差分を計算
+    targetPos[i] /= interpolation; // 補間回数で割る
+  }
+
+  // 補間動作でモーターを動かす
+  for (int step = 0; step < interpolation; step++) {
+    for (int i = 0; i < 15; i++) {
+      pos[i] += targetPos[i];      // 補間ステップ分移動
+      krs.setPos(i + 1, pos[i]);   // 新しい位置を設定
+    }
+    delay(dtime); // 指定した間隔を空ける
+  }
+}
+
 void forward(int right_leg_id, int left_leg_id) {
   krs.setPos(right_leg_id, 7500 + 1000);
   krs.setPos(left_leg_id, 7500 - 1000);
