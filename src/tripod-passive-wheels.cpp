@@ -50,11 +50,11 @@ void controlPos(
   int designatedPos22,
   int designatedPos23,
   int designatedPos24,
-  int dtime,
+  int delayTime,
   int interpolation
 ){
   int i = 0;
-  int c = 0;
+  int step = 0;
 
   int pos[15];
   int targetPos[15];
@@ -107,7 +107,7 @@ void controlPos(
       pos[i] += targetPos[i];      // 補間ステップ分移動
       krs.setPos(i + 1, pos[i]);   // 新しい位置を設定
     }
-    delay(dtime); // 指定した間隔を空ける
+    delay(delayTime); // 指定した間隔を空ける
   }
 }
 
