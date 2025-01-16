@@ -56,7 +56,7 @@ void controlPos(
   int i = 0;
   int step = 0;
 
-  int pos[15];
+  int currentPos[15];
   int targetPos[15];
   int homePos[15];
   int designatedPos[15];
@@ -103,16 +103,16 @@ void controlPos(
 
   for (int i = 0; i < 15; i++) {
     targetPos[i] = 7500 + homePos[i] + designatedPos[i];
-    pos[i] = krs.getPos(i + 1); // 現在値を取得
-    targetPos[i] -= pos[i];     // 現在値から目標値への差分を計算
+    currentPos[i] = krs.getPos(i + 1); // 現在値を取得
+    targetPos[i] -= currentPos[i];     // 現在値から目標値への差分を計算
     targetPos[i] /= interpolation; // 補間回数で割る
   }
 
   // 補間動作でモーターを動かす
   for (int step = 0; step < interpolation; step++) {
     for (int i = 0; i < 15; i++) {
-      pos[i] += targetPos[i];      // 補間ステップ分移動
-      krs.setPos(i + 1, pos[i]);   // 新しい位置を設定
+      currentPos[i] += targetPos[i];      // 補間ステップ分移動
+      krs.setPos(i + 1, currentPos[i]);   // 新しい位置を設定
     }
     delay(delayTime); // 指定した間隔を空ける
   }
@@ -214,7 +214,7 @@ void loop() {
             0, -1500, 0, -1000, 250,  // id = 0
             0, -1500, 0, -1000, 250,  // id = 10
             0, -1500, 0, -1000, 250,   // id = 20
-            500, 5
+            20, 60
           );
         }
         if (PS4.Right()) {
