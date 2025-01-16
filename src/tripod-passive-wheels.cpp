@@ -61,28 +61,28 @@ void controlPos(
   int homePos[15];
   int designatedPos[15];
 
-  // homePos[0] = 0;
-  // homePos[1] = 0;
-  // homePos[2] = 0;
-  // homePos[3] = 0;
-  // homePos[4] = 0;
-  // homePos[5] = 0;
-  // homePos[6] = 0;
-  // homePos[7] = 0;
-  // homePos[8] = 0;
-  // homePos[9] = 0;
-  // homePos[10] = 0;
-  // homePos[11] = 0;
-  // homePos[12] = 0;
-  // homePos[13] = 0;
-  // homePos[14] = 0;
-  for (int id = 0; id <= 24; id += 10) {
-    homePos[id / 10 * 5 + 0] = 0;
-    homePos[id / 10 * 5 + 1] = -1500;
-    homePos[id / 10 * 5 + 2] = 0;
-    homePos[id / 10 * 5 + 3] = -1000;
-    homePos[id / 10 * 5 + 4] = 250;
-  }
+  homePos[0] = 0;
+  homePos[1] = 0;
+  homePos[2] = 0;
+  homePos[3] = 0;
+  homePos[4] = 0;
+  homePos[5] = 0;
+  homePos[6] = 0;
+  homePos[7] = 0;
+  homePos[8] = 0;
+  homePos[9] = 0;
+  homePos[10] = 0;
+  homePos[11] = 0;
+  homePos[12] = 0;
+  homePos[13] = 0;
+  homePos[14] = 0;
+  // for (int id = 0; id <= 24; id += 10) {
+  //   homePos[id / 10 * 5 + 0] = 0;
+  //   homePos[id / 10 * 5 + 1] = -1500;
+  //   homePos[id / 10 * 5 + 2] = 0;
+  //   homePos[id / 10 * 5 + 3] = -1000;
+  //   homePos[id / 10 * 5 + 4] = 250;
+  // }
 
     // 指定値を配列に代入
   designatedPos[0] = designatedPos0;
@@ -209,7 +209,13 @@ void loop() {
       if (mode == front_leg) {
         PS4.setLed(255, 0, 0);
         if (PS4.Up()) {
-          forwardImp(0, 10, 4, 14);
+          // forwardImp(0, 10, 4, 14);
+          controlPos(
+            0, -1500, 0, -1000, 250,  // id = 0
+            0, -1500, 0, -1000, 250,  // id = 10
+            0, -1500, 0, -1000, 250,   // id = 20
+            500, 5
+          );
         }
         if (PS4.Right()) {
           krs.setPos(24, 7500 + 250 - 500);
