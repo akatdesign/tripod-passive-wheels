@@ -61,21 +61,28 @@ void controlPos(
   int homePos[15];
   int designatedPos[15];
 
-  homePos[0] = 0;
-  homePos[1] = 0;
-  homePos[2] = 0;
-  homePos[3] = 0;
-  homePos[4] = 0;
-  homePos[5] = 0;
-  homePos[6] = 0;
-  homePos[7] = 0;
-  homePos[8] = 0;
-  homePos[9] = 0;
-  homePos[10] = 0;
-  homePos[11] = 0;
-  homePos[12] = 0;
-  homePos[13] = 0;
-  homePos[14] = 0;
+  // homePos[0] = 0;
+  // homePos[1] = 0;
+  // homePos[2] = 0;
+  // homePos[3] = 0;
+  // homePos[4] = 0;
+  // homePos[5] = 0;
+  // homePos[6] = 0;
+  // homePos[7] = 0;
+  // homePos[8] = 0;
+  // homePos[9] = 0;
+  // homePos[10] = 0;
+  // homePos[11] = 0;
+  // homePos[12] = 0;
+  // homePos[13] = 0;
+  // homePos[14] = 0;
+  for (int id = 0; id <= 24; id += 10) {
+    homePos[id / 10 * 5 + 0] = 0;
+    homePos[id / 10 * 5 + 1] = -1500;
+    homePos[id / 10 * 5 + 2] = 0;
+    homePos[id / 10 * 5 + 3] = -1000;
+    homePos[id / 10 * 5 + 4] = 250;
+  }
 
     // 指定値を配列に代入
   designatedPos[0] = designatedPos0;
