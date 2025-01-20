@@ -4,11 +4,9 @@
 
 const byte EN_PIN = 2;
 const long BAUDRATE = 115200;
-const int TIMEOUT = 10; // 通信できてないか確認用にわざと遅めに設定
+const int TIMEOUT = 10;
 
-IcsHardSerialClass
-    krs(&Serial, EN_PIN, BAUDRATE,
-        TIMEOUT); // インスタンス＋ENピン(2番ピン)およびUARTの指定
+IcsHardSerialClass krs(&Serial, EN_PIN, BAUDRATE, TIMEOUT); // インスタンス＋ENピン(2番ピン)およびUARTの指定
 
 enum Mode { front_leg, right_leg, left_leg };
 
@@ -35,87 +33,57 @@ void resetPosition() {
 }
 
 void controlPos(
-  int designatedPos0,
-  int designatedPos1,
-  int designatedPos2,
-  int designatedPos3,
-  int designatedPos4,
-  int designatedPos10,
-  int designatedPos11,
-  int designatedPos12,
-  int designatedPos13,
-  int designatedPos14,
-  int designatedPos20,
-  int designatedPos21,
-  int designatedPos22,
-  int designatedPos23,
-  int designatedPos24,
-  int delayTime,
-  int interpolation
-){
-  int i = 0;
-  int step = 0;
-
+  int designatedPos0, int designatedPos1, int designatedPos2, int designatedPos3, int designatedPos4,
+  int designatedPos10, int designatedPos11, int designatedPos12, int designatedPos13, int designatedPos14,
+  int designatedPos20, int designatedPos21, int designatedPos22, int designatedPos23, int designatedPos24,
+  int delayTime, int interpolation
+) {
   int currentPos[15];
   int targetPos[15];
-  int homePos[15];
-  int designatedPos[15];
+  int homePos[15] = {0};
+  int designatedPos[15] = {
+    designatedPos0, designatedPos1, designatedPos2, designatedPos3, designatedPos4,
+    designatedPos10, designatedPos11, designatedPos12, designatedPos13, designatedPos14,
+    designatedPos20, designatedPos21, designatedPos22, designatedPos23, designatedPos24
+  };
+//targetpos[]に目標値を代入
+  for (int j = 0; j < 5; j++) {
+    targetPos[j] = 7500 + homePos[j] + designatedPos[j];
+    targetPos[j + 5] = 7500 + homePos[j + 5] + designatedPos[j + 5];
+    targetPos[j + 10] = 7500 + homePos[j + 10] + designatedPos[j + 10];
 
-  homePos[0] = 0;
-  homePos[1] = 0;
-  homePos[2] = 0;
-  homePos[3] = 0;
-  homePos[4] = 0;
-  homePos[5] = 0;
-  homePos[6] = 0;
-  homePos[7] = 0;
-  homePos[8] = 0;
-  homePos[9] = 0;
-  homePos[10] = 0;
-  homePos[11] = 0;
-  homePos[12] = 0;
-  homePos[13] = 0;
-  homePos[14] = 0;
-  // for (int id = 0; id <= 24; id += 10) {
-  //   homePos[id / 10 * 5 + 0] = 0;
-  //   homePos[id / 10 * 5 + 1] = -1500;
-  //   homePos[id / 10 * 5 + 2] = 0;
-  //   homePos[id / 10 * 5 + 3] = -1000;
-  //   homePos[id / 10 * 5 + 4] = 250;
+    currentPos[j] = krs.getPos(j); //+1?
+
+    targetPos[j] -= currentPos[j];
+    targetPos[j] /= interpolation;
+  }
+
+  // 配列の中身を出力
+  // Serial.println("currentPos配列の中身:");
+  // for (int i = 0; i < 15; i++) {
+  //   Serial.print("Index ");
+  //   Serial.print(i);
+  //   Serial.print(": ");
+  //   Serial.println(currentPos[i]); // 値を1行ずつ出力
   // }
 
-    // 指定値を配列に代入
-  designatedPos[0] = designatedPos0;
-  designatedPos[1] = designatedPos1;
-  designatedPos[2] = designatedPos2;
-  designatedPos[3] = designatedPos3;
-  designatedPos[4] = designatedPos4;
-  designatedPos[5] = designatedPos10;
-  designatedPos[6] = designatedPos11;
-  designatedPos[7] = designatedPos12;
-  designatedPos[8] = designatedPos13;
-  designatedPos[9] = designatedPos14;
-  designatedPos[10] = designatedPos20;
-  designatedPos[11] = designatedPos21;
-  designatedPos[12] = designatedPos22;
-  designatedPos[13] = designatedPos23;
-  designatedPos[14] = designatedPos24;
+  //   Serial.println("目標配列の中身:");
+  //   for (int i = 0; i < 15; i++) {
+  //     Serial.print("Index ");
+  //     Serial.print(i);
+  //     Serial.print(": ");
+  //     Serial.println(targetPos[i]); // 値を1行ずつ出力
+  //   }
 
-  for (int i = 0; i < 15; i++) {
-    targetPos[i] = 7500 + homePos[i] + designatedPos[i];
-    currentPos[i] = krs.getPos(i + 1); // 現在値を取得
-    targetPos[i] -= currentPos[i];     // 現在値から目標値への差分を計算
-    targetPos[i] /= interpolation; // 補間回数で割る
+for (int o = 0; o < interpolation; o++) {
+  for (int p = 0; p < 5; p++) {
+    currentPos[p] = currentPos[p] + targetPos[p];
+    krs.setPos(p, currentPos[p]);
+    krs.setPos(p+10, currentPos[p+5]);
+    krs.setPos(p+20, currentPos[p+10]);
   }
-
-  // 補間動作でモーターを動かす
-  for (int step = 0; step < interpolation; step++) {
-    for (int i = 0; i < 15; i++) {
-      currentPos[i] += targetPos[i];      // 補間ステップ分移動
-      krs.setPos(i + 1, currentPos[i]);   // 新しい位置を設定
-    }
-    delay(delayTime); // 指定した間隔を空ける
-  }
+  delay(delayTime);
+}
 }
 
 void forward(int right_leg_id, int left_leg_id) {
@@ -193,14 +161,13 @@ void leftRotation() {
 void setup() {
   Serial.begin(115200);
   PS4.begin("08:B6:1F:ED:4B:E2");
-  krs.begin();     // サーボモータの通信初期設定
-  resetPosition(); // サーボの初期位置設定
+  krs.begin(); // サーボモータの通信初期設定
+  resetPosition();
 }
 
 void loop() {
-  Mode mode = front_leg;
+  static Mode mode = front_leg;
 
-  while (true) {
     if (PS4.isConnected()) {
       if (PS4.Share()) {
         mode = ChangeMode(mode);
@@ -211,11 +178,17 @@ void loop() {
         if (PS4.Up()) {
           // forwardImp(0, 10, 4, 14);
           controlPos(
-            0, -1500, 0, -1000, 250,  // id = 0
-            0, -1500, 0, -1000, 250,  // id = 10
-            0, -1500, 0, -1000, 250,   // id = 20
+            -1000, 0, 0, 0, 0,  // id = 0
+            -1000, 0, 0, 0, 0,  // id = 10
+            0, 0, 0, 0, 0,   // id = 20
             20, 60
           );
+          // controlPos(
+          //   0, 0, 0, 0, 0,  // id = 0
+          //   0, 0, 0, 0, 0,  // id = 10
+          //   0, 0, 0, 0, 0,   // id = 20
+          //   20, 60
+          // );
         }
         if (PS4.Right()) {
           krs.setPos(24, 7500 + 250 - 500);
@@ -256,7 +229,13 @@ void loop() {
         }
       }
       if (PS4.Cross()) {
-        resetPosition();
+        // resetPosition();
+          controlPos(
+            0, -1500, 0, -1000, 250,  // id = 0
+            0, -1500, 0, -1000, 250,  // id = 10
+            0, -1500, 0, -1000, 250,   // id = 20
+            20, 60
+          );
       }
       if (PS4.L1()) {
         leftRotation();
@@ -265,6 +244,8 @@ void loop() {
         rightRotation();
       }
       PS4.sendToController();
+    } else {
+      resetPosition();
+      delay(1000);
     }
   }
-}
