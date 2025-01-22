@@ -40,7 +40,22 @@ void controlPos(
 ) {
   int currentPos[15];
   int targetPos[15];
-  int homePos[15] = {0};
+  int homePos[15]; // = {0} defalt 7500
+  homePos[0] = 0;
+  homePos[1] = -1500;
+  homePos[2] = 0;
+  homePos[3] = -1000;
+  homePos[4] = 250; //id 4
+  homePos[5] = 0;
+  homePos[6] = -1500;
+  homePos[7] = 0;
+  homePos[8] = -1000;
+  homePos[9] = 250; //id 14
+  homePos[10] = 0;
+  homePos[11] = -1500;
+  homePos[12] = 0;
+  homePos[13] = -1000;
+  homePos[14] = 250; //id 24
   int designatedPos[15] = {
     designatedPos0, designatedPos1, designatedPos2, designatedPos3, designatedPos4,
     designatedPos10, designatedPos11, designatedPos12, designatedPos13, designatedPos14,
@@ -52,28 +67,34 @@ void controlPos(
     targetPos[j + 5] = 7500 + homePos[j + 5] + designatedPos[j + 5];
     targetPos[j + 10] = 7500 + homePos[j + 10] + designatedPos[j + 10];
 
-    currentPos[j] = krs.getPos(j); //+1?
+    currentPos[j] = krs.getPos(j);
+    currentPos[j + 5] = krs.getPos(j + 10);
+    currentPos[j + 10] = krs.getPos(j + 20);
 
     targetPos[j] -= currentPos[j];
     targetPos[j] /= interpolation;
+    targetPos[j + 5] -= currentPos[j + 5];
+    targetPos[j + 5] /= interpolation;
+    targetPos[j + 10] -= currentPos[j + 10];
+    targetPos[j + 10] /= interpolation;
   }
 
-  // 配列の中身を出力
-  // Serial.println("currentPos配列の中身:");
-  // for (int i = 0; i < 15; i++) {
-  //   Serial.print("Index ");
-  //   Serial.print(i);
-  //   Serial.print(": ");
-  //   Serial.println(currentPos[i]); // 値を1行ずつ出力
-  // }
+  //配列の中身を出力
+  Serial.println("currentPos配列の中身:"); //TODO: id0-4まで通信失敗
+  for (int i = 0; i < 15; i++) {
+    Serial.print("Index ");
+    Serial.print(i);
+    Serial.print(": ");
+    Serial.println(currentPos[i]); // 値を1行ずつ出力
+  }
 
-  //   Serial.println("目標配列の中身:");
-  //   for (int i = 0; i < 15; i++) {
-  //     Serial.print("Index ");
-  //     Serial.print(i);
-  //     Serial.print(": ");
-  //     Serial.println(targetPos[i]); // 値を1行ずつ出力
-  //   }
+    Serial.println("目標配列の中身:");
+    for (int i = 0; i < 15; i++) {
+      Serial.print("Index ");
+      Serial.print(i);
+      Serial.print(": ");
+      Serial.println(targetPos[i]); // 値を1行ずつ出力
+    }
 
 for (int o = 0; o < interpolation; o++) {
   for (int p = 0; p < 5; p++) {
@@ -178,17 +199,11 @@ void loop() {
         if (PS4.Up()) {
           // forwardImp(0, 10, 4, 14);
           controlPos(
-            -1000, 0, 0, 0, 0,  // id = 0
+            1000, 0, 0, 0, 0,  // id = 0
             -1000, 0, 0, 0, 0,  // id = 10
             0, 0, 0, 0, 0,   // id = 20
             20, 60
           );
-          // controlPos(
-          //   0, 0, 0, 0, 0,  // id = 0
-          //   0, 0, 0, 0, 0,  // id = 10
-          //   0, 0, 0, 0, 0,   // id = 20
-          //   20, 60
-          // );
         }
         if (PS4.Right()) {
           krs.setPos(24, 7500 + 250 - 500);
@@ -202,7 +217,13 @@ void loop() {
       } else if (mode == right_leg) {
         PS4.setLed(0, 255, 0);
         if (PS4.Up()) {
-          forward(20, 0);
+          // forward(20, 0);
+          controlPos(
+            -1000, 0, 0, 0, 0,  // id = 0
+            0, 0, 0, 0, 0,  // id = 10
+            1000, 0, 0, 0, 0,   // id = 20
+            20, 60
+          );
         }
         if (PS4.Right()) {
           krs.setPos(14, 7500 + 250 - 500);
