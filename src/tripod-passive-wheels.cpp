@@ -248,7 +248,7 @@ void reverseLeftRotation() {
   krs.setPos(14, 7500 - 1250);
   krs.setPos(24, 7500 - 1250);
   delay(500);
-  krs.setPos(2, 7500 + 4000);//max
+  krs.setPos(2, 7500 + 4000);
   krs.setPos(12, 7500 + 4000);
   krs.setPos(22, 7500 + 4000);
   krs.setPos(3, 7500 - 2500);
@@ -342,7 +342,7 @@ void loop() {
         if (PS4.L2()) {
           reverseLeftRotation();
         }
-        if (PS4.Options()) {
+        if (PS4.Triangle()) {
           reversePosition();
         }
       }
