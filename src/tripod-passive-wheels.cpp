@@ -24,7 +24,6 @@ Mode ChangeMode(Mode current) {
   }
 }
 
-
 void resetPosition() {
   for (int id = 0; id <= 24; id += 10) {
     krs.setPos(id, 7500);
@@ -160,6 +159,36 @@ void forwardImp(int left_leg_id, int right_leg_id, int left_tip_leg_id, int righ
   delay(500);
 }
 
+void forwardOpenClose(int left_leg_id, int right_leg_id, int left_tip_leg_id, int right_tip_leg_id, int delay_time) {
+  krs.setPos(left_tip_leg_id, 7500 - 1000);//ハ
+  krs.setPos(right_tip_leg_id, 7500 + 1000);
+  delay(delay_time);
+  krs.setPos(left_leg_id, 7500 - 2000);//閉じる
+  krs.setPos(right_leg_id, 7500 + 2000);
+  delay(delay_time);
+  krs.setPos(left_tip_leg_id, 7500 + 2000);//逆ハ
+  krs.setPos(right_tip_leg_id, 7500 - 2000);
+  delay(delay_time);
+  krs.setPos(left_leg_id, 7500 + 1000);//開く ±1000なしで昨年度
+  krs.setPos(right_leg_id, 7500 - 1000);
+  delay(delay_time);
+}
+
+void backward(int left_leg_id, int right_leg_id, int left_tip_leg_id, int right_tip_leg_id, int delay_time) {
+  krs.setPos(left_tip_leg_id, 7500 + 1000);//ハ
+  krs.setPos(right_tip_leg_id, 7500 - 1000);
+  delay(delay_time);
+  krs.setPos(left_leg_id, 7500 - 1500);//閉じる
+  krs.setPos(right_leg_id, 7500 + 1500);
+  delay(delay_time);
+  krs.setPos(left_tip_leg_id, 7500 - 1000);//逆ハ
+  krs.setPos(right_tip_leg_id, 7500 + 1000);
+  delay(delay_time);
+  krs.setPos(left_leg_id, 7500);//開く
+  krs.setPos(right_leg_id, 7500);
+  delay(delay_time);
+}
+
 void rightRotation() {
   krs.setPos(4, 7500 - 1250);
   krs.setPos(14, 7500 - 1250);
@@ -286,7 +315,8 @@ void loop() {
         PS4.setLed(255, 0, 0);
         if (PS4.Up()) {
           // forward(0, 10);
-          forwardImp(0, 10, 4, 14);
+          // forwardImp(0, 10, 4, 14);
+          forwardOpenClose(0, 10, 4, 14, 100);
         }
         if (PS4.Right()) {
           krs.setPos(24, 7500 + 250 - 500);
