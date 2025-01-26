@@ -182,6 +182,31 @@ void rightRotation() {
   delay(500);
 }
 
+void reverseRightRotation() {
+  krs.setPos(4, 7500 - 1250);
+  krs.setPos(14, 7500 - 1250);
+  krs.setPos(24, 7500 - 1250);
+  delay(500);
+  krs.setPos(2, 7500 + 3000);
+  krs.setPos(12, 7500 + 3000);
+  krs.setPos(22, 7500 + 3000);
+  krs.setPos(3, 7500 - 3500);
+  krs.setPos(13, 7500 - 3500);
+  krs.setPos(23, 7500 - 3500);
+  delay(500);
+  krs.setPos(4, 7500 + 1750);
+  krs.setPos(14, 7500 + 1750);
+  krs.setPos(24, 7500 + 1750);
+  delay(500);
+  krs.setPos(2, 7500 + 4000);//max
+  krs.setPos(12, 7500 + 4000);
+  krs.setPos(22, 7500 + 4000);
+  krs.setPos(3, 7500 - 2500);
+  krs.setPos(13, 7500 - 2500);
+  krs.setPos(23, 7500 - 2500);
+  delay(500);
+}
+
 void leftRotation() {
   krs.setPos(4, 7500 + 1750);
   krs.setPos(14, 7500 + 1750);
@@ -201,6 +226,31 @@ void leftRotation() {
   krs.setPos(2, 7500 - 1500);
   krs.setPos(12, 7500 - 1500);
   krs.setPos(22, 7500 - 1500);
+  krs.setPos(3, 7500 - 2500);
+  krs.setPos(13, 7500 - 2500);
+  krs.setPos(23, 7500 - 2500);
+  delay(500);
+}
+
+void reverseLeftRotation() {
+  krs.setPos(4, 7500 + 1750);
+  krs.setPos(14, 7500 + 1750);
+  krs.setPos(24, 7500 + 1750);
+  delay(500);
+  krs.setPos(2, 7500 + 3000);
+  krs.setPos(12, 7500 + 3000);
+  krs.setPos(22, 7500 + 3000);
+  krs.setPos(3, 7500 - 3500);
+  krs.setPos(13, 7500 - 3500);
+  krs.setPos(23, 7500 - 3500);
+  delay(500);
+  krs.setPos(4, 7500 - 1250);
+  krs.setPos(14, 7500 - 1250);
+  krs.setPos(24, 7500 - 1250);
+  delay(500);
+  krs.setPos(2, 7500 + 4000);//max
+  krs.setPos(12, 7500 + 4000);
+  krs.setPos(22, 7500 + 4000);
   krs.setPos(3, 7500 - 2500);
   krs.setPos(13, 7500 - 2500);
   krs.setPos(23, 7500 - 2500);
@@ -287,6 +337,12 @@ void loop() {
           krs.setPos(4, 7500 + 250 + 500);
         }
         if (PS4.R2()) {
+          reverseRightRotation();
+        }
+        if (PS4.L2()) {
+          reverseLeftRotation();
+        }
+        if (PS4.Options()) {
           reversePosition();
         }
       }
