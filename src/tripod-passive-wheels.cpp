@@ -131,29 +131,32 @@ for (int o = 0; o < interpolation; o++) {
 }
 // int postest[2];
 
-void forward(int right_leg_id, int left_leg_id) {
+void forward(int left_leg_id, int right_leg_id) {
   // postest[1] = krs.getStrc(right_leg_id);
   // postest[2] = krs.getStrc(left_leg_id);
   // Serial.println(postest[1]);
   // Serial.println(postest[2]);
-  krs.setPos(right_leg_id, 7500 + 1000);
-  krs.setPos(left_leg_id, 7500 - 1000);
+  krs.setPos(left_leg_id, 7500 + 1000);
+  krs.setPos(right_leg_id, 7500 - 1000);
   delay(500);
-  krs.setPos(right_leg_id, 7500 - 1500);
-  krs.setPos(left_leg_id, 7500 + 1500);
+  krs.setPos(left_leg_id, 7500 - 1500);
+  krs.setPos(right_leg_id, 7500 + 1500);
   delay(500);
 }
 
-void forwardImp(int right_leg_id, int left_leg_id, int right_tip_leg_id, int left_tip_leg_id) {
-  krs.setPos(right_leg_id, 7500 + 1000);
-  krs.setPos(left_leg_id, 7500 - 1000);
-  krs.setPos(right_tip_leg_id, 7500 + 1000);
-  krs.setPos(left_tip_leg_id, 7500 - 1000);
+void forwardImp(int left_leg_id, int right_leg_id, int left_tip_leg_id, int right_tip_leg_id) {
+  krs.setPos(left_leg_id, 7500 + 1000);
+  krs.setPos(right_leg_id, 7500 - 1000);
+  krs.setPos(left_tip_leg_id, 7500 + 2000);
+  krs.setPos(right_tip_leg_id, 7500 - 2000);
   delay(500);
-  krs.setPos(right_leg_id, 7500 - 1500);
-  krs.setPos(left_leg_id, 7500 + 1500);
-  krs.setPos(right_tip_leg_id, 7500 - 100);
-  krs.setPos(left_tip_leg_id, 7500 + 100);
+  krs.setPos(right_tip_leg_id, 7500);
+  krs.setPos(left_tip_leg_id, 7500);
+  delay(500);
+  krs.setPos(left_leg_id, 7500 - 1500);
+  krs.setPos(right_leg_id, 7500 + 1500);
+  krs.setPos(left_tip_leg_id, 7500 + 500);  //why
+  krs.setPos(right_tip_leg_id, 7500);
   delay(500);
 }
 
@@ -282,8 +285,8 @@ void loop() {
       if (mode == front_leg) {
         PS4.setLed(255, 0, 0);
         if (PS4.Up()) {
-          forward(0, 10);
-          // forwardImp(0, 10, 4, 14);
+          // forward(0, 10);
+          forwardImp(0, 10, 4, 14);
         }
         if (PS4.Right()) {
           krs.setPos(24, 7500 + 250 - 500);
