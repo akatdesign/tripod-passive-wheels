@@ -6,9 +6,9 @@ const byte EN_PIN = 2;
 const long BAUDRATE = 115200;
 const int TIMEOUT = 10;
 
-IcsHardSerialClass krs(&Serial, EN_PIN, BAUDRATE, TIMEOUT); // インスタンス＋ENピン(2番ピン)およびUARTの指定
+IcsHardSerialClass krs(&Serial, EN_PIN, BAUDRATE, TIMEOUT); // インスタンス＋ENピンおよびUARTの指定
 
-enum Mode { front_leg, right_leg, left_leg };
+enum Mode { front_leg, right_leg, left_leg, reverse_leg };
 
 Mode ChangeMode(Mode current) {
   if (current == front_leg) {
@@ -16,11 +16,14 @@ Mode ChangeMode(Mode current) {
   } else if (current == right_leg) {
     return left_leg;
   } else if (current == left_leg) {
+    return reverse_leg;
+  } else if (current == reverse_leg) {
     return front_leg;
   } else {
     return front_leg; // デフォルトの戻り値
   }
 }
+
 
 void resetPosition() {
   for (int id = 0; id <= 24; id += 10) {
@@ -29,6 +32,26 @@ void resetPosition() {
     krs.setPos(id + 2, 7500);
     krs.setPos(id + 3, 7500 - 1000);
     krs.setPos(id + 4, 7500 + 250);
+  }
+}
+
+void reversePosition() {
+  for (int id = 0; id <= 24; id += 10) {
+    krs.setPos(id, 7500);
+    krs.setPos(id + 1, 7500 - 1500);
+    krs.setPos(id + 2, 7500 + 3000);
+    krs.setPos(id + 3, 7500 - 3500);
+    krs.setPos(id + 4, 7500 + 250);
+  }
+}
+
+void zeroPosition() {
+  for (int id = 0; id <= 24; id += 10) {
+    krs.setPos(id, 7500);
+    krs.setPos(id + 1, 7500);
+    krs.setPos(id + 2, 7500);
+    krs.setPos(id + 3, 7500);
+    krs.setPos(id + 4, 7500);
   }
 }
 
@@ -80,21 +103,21 @@ void controlPos(
   }
 
   //配列の中身を出力
-  Serial.println("currentPos配列の中身:"); //TODO: id0-4まで通信失敗
-  for (int i = 0; i < 15; i++) {
-    Serial.print("Index ");
-    Serial.print(i);
-    Serial.print(": ");
-    Serial.println(currentPos[i]); // 値を1行ずつ出力
-  }
+  // Serial.println("currentPos配列の中身:");
+  // for (int i = 0; i < 15; i++) {
+  //   Serial.print("Index ");
+  //   Serial.print(i);
+  //   Serial.print(": ");
+  //   Serial.println(currentPos[i]); // 値を1行ずつ出力
+  // }
 
-    Serial.println("目標配列の中身:");
-    for (int i = 0; i < 15; i++) {
-      Serial.print("Index ");
-      Serial.print(i);
-      Serial.print(": ");
-      Serial.println(targetPos[i]); // 値を1行ずつ出力
-    }
+  //   Serial.println("目標配列の中身:");
+  //   for (int i = 0; i < 15; i++) {
+  //     Serial.print("Index ");
+  //     Serial.print(i);
+  //     Serial.print(": ");
+  //     Serial.println(targetPos[i]); // 値を1行ずつ出力
+  //   }
 
 for (int o = 0; o < interpolation; o++) {
   for (int p = 0; p < 5; p++) {
@@ -106,8 +129,13 @@ for (int o = 0; o < interpolation; o++) {
   delay(delayTime);
 }
 }
+// int postest[2];
 
 void forward(int right_leg_id, int left_leg_id) {
+  // postest[1] = krs.getStrc(right_leg_id);
+  // postest[2] = krs.getStrc(left_leg_id);
+  // Serial.println(postest[1]);
+  // Serial.println(postest[2]);
   krs.setPos(right_leg_id, 7500 + 1000);
   krs.setPos(left_leg_id, 7500 - 1000);
   delay(500);
@@ -183,7 +211,10 @@ void setup() {
   Serial.begin(115200);
   PS4.begin("08:B6:1F:ED:4B:E2");
   krs.begin(); // サーボモータの通信初期設定
+  zeroPosition();
+  delay(500);
   resetPosition();
+  // reversePosition(); 
 }
 
 void loop() {
@@ -192,18 +223,17 @@ void loop() {
     if (PS4.isConnected()) {
       if (PS4.Share()) {
         mode = ChangeMode(mode);
-        resetPosition();
+        if (mode == reverse_leg) {
+          reversePosition();
+        } else {
+          resetPosition();
+        }
       }
       if (mode == front_leg) {
         PS4.setLed(255, 0, 0);
         if (PS4.Up()) {
+          forward(0, 10);
           // forwardImp(0, 10, 4, 14);
-          controlPos(
-            1000, 0, 0, 0, 0,  // id = 0
-            -1000, 0, 0, 0, 0,  // id = 10
-            0, 0, 0, 0, 0,   // id = 20
-            20, 60
-          );
         }
         if (PS4.Right()) {
           krs.setPos(24, 7500 + 250 - 500);
@@ -217,13 +247,7 @@ void loop() {
       } else if (mode == right_leg) {
         PS4.setLed(0, 255, 0);
         if (PS4.Up()) {
-          // forward(20, 0);
-          controlPos(
-            -1000, 0, 0, 0, 0,  // id = 0
-            0, 0, 0, 0, 0,  // id = 10
-            1000, 0, 0, 0, 0,   // id = 20
-            20, 60
-          );
+          forward(20, 0);
         }
         if (PS4.Right()) {
           krs.setPos(14, 7500 + 250 - 500);
@@ -248,15 +272,27 @@ void loop() {
         if (PS4.Left()) {
           krs.setPos(4, 7500 + 250 + 500);
         }
+      }else if (mode == reverse_leg) {
+        PS4.setLed(255, 255, 0);
+        if (PS4.Up()) {
+          forward(10, 20);
+        }
+        if (PS4.Right()) {
+          krs.setPos(4, 7500 + 250 - 500);
+        }
+        if (PS4.Down()) {
+          krs.setPos(4, 7500 + 250);
+        }
+        if (PS4.Left()) {
+          krs.setPos(4, 7500 + 250 + 500);
+        }
+        if (PS4.R2()) {
+          reversePosition();
+        }
       }
       if (PS4.Cross()) {
-        // resetPosition();
-          controlPos(
-            0, -1500, 0, -1000, 250,  // id = 0
-            0, -1500, 0, -1000, 250,  // id = 10
-            0, -1500, 0, -1000, 250,   // id = 20
-            20, 60
-          );
+        resetPosition();
+        // reversePosition();
       }
       if (PS4.L1()) {
         leftRotation();
